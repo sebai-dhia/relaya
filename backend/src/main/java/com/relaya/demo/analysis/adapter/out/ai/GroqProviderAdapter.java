@@ -52,9 +52,9 @@ public class GroqProviderAdapter implements ProviderAdapter {
 	private static final List<String> FALLBACK_MODELS = List.of(
 			"openai/gpt-oss-120b",
 			"openai/gpt-oss-20b",
+			"qwen/qwen3.8-27b",
 			"llama-3.1-8b-instant",
-			"llama3-8b-8192",
-			"mixtral-8x7b-32768"
+			"llama3-8b-8192"
 	);
 
 	@Override
