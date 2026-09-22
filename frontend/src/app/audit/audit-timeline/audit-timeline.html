@@ -1,0 +1,40 @@
+<div class="timeline-container surface-card">
+  <h3 class="timeline-title">Immutable Audit Trail</h3>
+  <div class="timeline-stack">
+    @for (ev of visibleEvents(); track ev.occurredAt) {
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <div class="event-header">
+            <span class="event-type badge badge-neutral">{{ formatEventType(ev.eventType) }}</span>
+            <span class="event-time">{{ ev.occurredAt | date:'medium' }}</span>
+          </div>
+          @if (formatPayload(ev.payload); as info) {
+            @if (info.type === 'error') {
+              <div class="payload-error">
+                <svg class="icon-svg alert-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <span>{{ info.text }}</span>
+              </div>
+            } @else {
+              <span class="payload-badge">{{ info.text }}</span>
+            }
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (hasMore) {
+    <button type="button" class="timeline-toggle" (click)="toggleExpand()">
+      @if (expanded()) {
+        Show fewer events
+      } @else {
+        Show all {{ events().length }} events
+      }
+    </button>
+  }
+</div>

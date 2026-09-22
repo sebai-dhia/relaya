@@ -1,0 +1,73 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">User Management</h1>
+      <p class="page-subtitle">Provision reviewer and administrator accounts</p>
+    </div>
+    <button type="button" class="btn btn-accent" (click)="showCreateModal.set(!showCreateModal())">
+      <span>+ New User</span>
+    </button>
+  </div>
+
+  @if (showCreateModal()) {
+    <div class="create-card surface-card">
+      <h3 class="create-title">Provision Reviewer / Admin</h3>
+      <div class="create-form">
+        <input
+          type="email"
+          [(ngModel)]="newEmail"
+          placeholder="reviewer@agency.com"
+          class="form-input"
+        />
+        <select [(ngModel)]="newRole" class="form-input">
+          <option value="ROLE_REVIEWER">ROLE_REVIEWER</option>
+          <option value="ROLE_ADMIN">ROLE_ADMIN</option>
+        </select>
+        <button type="button" class="btn btn-primary" (click)="onCreateUser()">
+          Create Account
+        </button>
+      </div>
+    </div>
+  }
+
+  <div class="table-container surface-card">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Created</th>
+          <th style="text-align: right;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (u of users(); track u.id) {
+          <tr>
+            <td class="font-bold">{{ u.email }}</td>
+            <td>
+              <span class="badge" [ngClass]="u.role === 'ROLE_ADMIN' ? 'badge-approved' : 'badge-neutral'">
+                {{ u.role }}
+              </span>
+            </td>
+            <td>
+              <span class="badge" [ngClass]="u.active ? 'badge-success' : 'badge-failed'">
+                {{ u.active ? 'ACTIVE' : 'INACTIVE' }}
+              </span>
+            </td>
+            <td>{{ u.createdAt | date:'short' }}</td>
+            <td style="text-align: right;">
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm"
+                (click)="toggleActive(u)"
+              >
+                {{ u.active ? 'Deactivate' : 'Activate' }}
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

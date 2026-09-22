@@ -1,0 +1,37 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Failed Board Writes</h1>
+      <p class="page-subtitle">External board connection issues requiring manual operator review</p>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-box">Loading failed writes...</div>
+  } @else if (writes().length === 0) {
+    <div class="empty-card surface-card content-enter">
+      <p>✓ All board writes have completed successfully or remain in clean state.</p>
+    </div>
+  } @else {
+    <div class="table-container surface-card content-enter">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Client Project</th>
+            <th>Error Details</th>
+            <th>Failed At</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (w of writes(); track w.boardWriteId) {
+            <tr>
+              <td class="font-bold">{{ w.intakeClientLabel }}</td>
+              <td class="error-text font-mono">{{ w.errorDetails || 'Ambiguous response / write error' }}</td>
+              <td>{{ w.createdAt | date:'short' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

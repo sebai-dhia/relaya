@@ -1,0 +1,69 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">AI Usage & Cost Governance</h1>
+      <p class="page-subtitle">Dual-guard cost tracking, token consumption, and model ledger</p>
+    </div>
+    @if (usage()) {
+      <span class="badge badge-neutral">Cycle: {{ usage()?.billingCycle }}</span>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="loading-box">Loading usage metrics...</div>
+  } @else if (usage()) {
+    <div class="metrics-grid content-enter">
+      <!-- Spend Metric Card -->
+      <div class="surface-card metric-card">
+        <span class="metric-label">Month-to-Date Spend</span>
+        <div class="metric-val-row">
+          <span class="metric-value font-mono">${{ usage()?.totalSpentUsd | number:'1.2-4' }}</span>
+          <span class="metric-cap">/ ${{ usage()?.budgetLimitUsd | number:'1.2-2' }} cap</span>
+        </div>
+        <div class="budget-meter">
+          <div
+            class="meter-fill"
+            [style.width.%]="(usage()!.totalSpentUsd / usage()!.budgetLimitUsd) * 100"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Token Metric Card -->
+      <div class="surface-card metric-card">
+        <span class="metric-label">Total AI Tokens</span>
+        <div class="metric-val-row">
+          <span class="metric-value font-mono">{{ usage()?.totalTokens | number }}</span>
+          <span class="metric-sub">tokens processed</span>
+        </div>
+        <span class="metric-hint">Protected by MAX_TOKENS_PER_CALL limit</span>
+      </div>
+    </div>
+
+    <!-- Model Breakdown Table -->
+    <div class="surface-card breakdown-card">
+      <h3 class="breakdown-title">Provider & Model Breakdown</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th style="text-align: right;">API Calls</th>
+            <th style="text-align: right;">Prompt Tokens</th>
+            <th style="text-align: right;">Completion Tokens</th>
+            <th style="text-align: right;">Cost (USD)</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (m of usage()?.breakdownByModel; track m.model) {
+            <tr>
+              <td class="font-mono font-bold">{{ m.model }}</td>
+              <td style="text-align: right;">{{ m.calls }}</td>
+              <td style="text-align: right;" class="font-mono">{{ m.promptTokens | number }}</td>
+              <td style="text-align: right;" class="font-mono">{{ m.completionTokens | number }}</td>
+              <td style="text-align: right;" class="font-mono font-bold">${{ m.costUsd | number:'1.2-4' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
