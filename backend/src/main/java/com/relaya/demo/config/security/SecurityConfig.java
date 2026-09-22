@@ -43,7 +43,7 @@ public class SecurityConfig {
 						.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
 				)
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/api/v1/auth/login", "/api/v1/auth/refresh").permitAll()
+						.requestMatchers("/health", "/api/v1/health", "/api/v1/auth/login", "/api/v1/auth/refresh").permitAll()
 						.requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
 						.requestMatchers(
 								"/api/v1/auth/sse-token",
