@@ -49,6 +49,14 @@ public class GroqProviderAdapter implements ProviderAdapter {
 		this.restClient = Objects.requireNonNull(restClient, "restClient must not be null");
 	}
 
+	private static final List<String> FALLBACK_MODELS = List.of(
+			"openai/gpt-oss-120b",
+			"openai/gpt-oss-20b",
+			"llama-3.1-8b-instant",
+			"llama3-8b-8192",
+			"mixtral-8x7b-32768"
+	);
+
 	@Override
 	public ProviderExtractionResult extractAnalysis(UUID tenantId, String rawText) {
 		Objects.requireNonNull(tenantId, "tenantId must not be null");
@@ -58,19 +66,36 @@ public class GroqProviderAdapter implements ProviderAdapter {
 		budgetGuard.checkGuards(tenantId, estimatedTokens);
 
 		String apiKey = resolveApiKey(tenantId);
-		String model = resolveModel(tenantId);
+		String primaryModel = resolveModel(tenantId);
 
 		if (apiKey.isBlank() || "PLACEHOLDER".equalsIgnoreCase(apiKey)) {
 			log.info("Using synthetic extraction fallback for tenant {} (no live Groq API key)", tenantId);
-			return generateSyntheticFallback(rawText, model, estimatedTokens);
+			return generateSyntheticFallback(rawText, primaryModel, estimatedTokens);
 		}
 
-		try {
-			return callGroqApi(rawText, model, apiKey, estimatedTokens);
-		} catch (Exception e) {
-			log.warn("Groq API call failed ({}). Falling back to synthetic extraction for demo resilience.", e.getMessage());
-			return generateSyntheticFallback(rawText, model, estimatedTokens);
+		List<String> candidates = new ArrayList<>();
+		if (primaryModel != null && !primaryModel.isBlank()) {
+			candidates.add(primaryModel.trim());
 		}
+		for (String fallback : FALLBACK_MODELS) {
+			if (!candidates.contains(fallback)) {
+				candidates.add(fallback);
+			}
+		}
+
+		for (String candidateModel : candidates) {
+			try {
+				log.info("Attempting extraction with Groq model: {}", candidateModel);
+				ProviderExtractionResult result = callGroqApi(rawText, candidateModel, apiKey, estimatedTokens);
+				log.info("Successfully extracted scope using Groq model: {}", candidateModel);
+				return result;
+			} catch (Exception e) {
+				log.warn("Groq model '{}' failed ({}). Attempting next fallback model...", candidateModel, e.getMessage());
+			}
+		}
+
+		log.warn("All candidate Groq models failed. Falling back to synthetic extraction for demo resilience.");
+		return generateSyntheticFallback(rawText, primaryModel, estimatedTokens);
 	}
 
 	private String resolveModel(UUID tenantId) {
@@ -78,8 +103,8 @@ public class GroqProviderAdapter implements ProviderAdapter {
 			return envGroqModel;
 		}
 		return tenantConfigPort.findConfigValue(tenantId, "GROQ_MODEL")
-				.filter(m -> !m.isBlank() && !"llama-3.3-70b-versatile".equalsIgnoreCase(m))
-				.orElse(DEFAULT_MODEL);
+				.filter(m -> !m.isBlank())
+				.orElse("openai/gpt-oss-120b");
 	}
 
 	private String resolveApiKey(UUID tenantId) {
