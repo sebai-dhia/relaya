@@ -1,7 +1,7 @@
 <div class="landing-viewport">
   <!-- Navigation Header -->
-  <header class="landing-header">
-    <div class="landing-container header-inner">
+  <header class="landing-header" [class.scrolled]="isScrolled()">
+    <div class="header-inner">
       <div class="brand-cluster">
         <a routerLink="/" class="brand-anchor" aria-label="Relaya Home">
           <img src="/assets/brand/relaya-mark-dark.svg" alt="Relaya mark" class="brand-icon" width="28" height="20" />

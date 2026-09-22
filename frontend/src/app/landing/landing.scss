@@ -38,22 +38,93 @@
   z-index: 0;
 }
 
-/* Header */
+/* Header: Full-Width at Top, Morphs into Floating Pill on Scroll */
 .landing-header {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
   z-index: 50;
-  background: rgba(7, 9, 14, 0.82);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-}
-
-.header-inner {
+  width: 100%;
+  max-width: 100%;
   height: 64px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  padding: 0 1.5rem;
+  border-radius: 0;
+  background: rgba(7, 9, 14, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid transparent;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+  transition: top 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              width 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+              max-width 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+              height 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              border-radius 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.4s ease,
+              background-color 0.4s ease,
+              box-shadow 0.5s ease,
+              padding 0.5s ease;
+}
+
+.header-inner {
+  width: 100%;
+  max-width: 1240px;
+  height: 100%;
+  display: flex;
+  align-items: center;
   justify-content: space-between;
+  margin: 0 auto;
+  transition: max-width 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Scrolled State: Morphs into Centered Floating Pill */
+.landing-header.scrolled {
+  top: 0.75rem;
+  width: calc(100% - 2rem);
+  max-width: 1040px;
+  height: 52px;
+  padding: 0 1.25rem;
+  border-radius: 9999px;
+  background: rgba(10, 14, 24, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.65), 0 2px 8px rgba(0, 0, 0, 0.35);
+
+  .header-inner {
+    max-width: 100%;
+  }
+
+  .brand-cluster {
+    .version-badge {
+      opacity: 0;
+      max-width: 0;
+      padding: 0;
+      margin: 0;
+      border: 1px solid transparent;
+      pointer-events: none;
+    }
+  }
+
+  .desktop-nav {
+    gap: 1.25rem;
+
+    .nav-link {
+      font-size: 0.8125rem;
+    }
+  }
+
+  .action-cluster {
+    .btn-sm {
+      padding: 0.325rem 0.875rem;
+      font-size: 0.8125rem;
+    }
+  }
 }
 
 .brand-cluster {
@@ -97,6 +168,11 @@
     background: rgba(255, 255, 255, 0.06);
     color: #94a3b8;
     border: 1px solid rgba(255, 255, 255, 0.08);
+    opacity: 1;
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: opacity 0.4s ease, max-width 0.45s cubic-bezier(0.16, 1, 0.3, 1), padding 0.4s ease;
   }
 }
 
@@ -104,12 +180,13 @@
   display: flex;
   align-items: center;
   gap: 1.75rem;
+  transition: gap 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 
   .nav-link {
     font-size: 0.875rem;
     font-weight: 500;
     color: #94a3b8;
-    transition: color 0.15s ease;
+    transition: color 0.15s ease, font-size 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 
     &:hover {
       color: #ffffff;
@@ -128,25 +205,34 @@
   align-items: center;
   gap: 0.75rem;
 
+  .btn {
+    border-radius: 9999px !important;
+    font-weight: 600;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
   .btn-secondary {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.12);
-    color: #f8fafc;
+    background: transparent;
+    border: 1px solid transparent;
+    color: #94a3b8;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.10);
+      color: #ffffff;
     }
   }
 
   .btn-primary {
     background: #0284c7;
-    border-color: #0284c7;
+    border: 1px solid #0284c7;
     color: #ffffff;
+    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
 
     &:hover {
       background: #0369a1;
       border-color: #0369a1;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.45);
     }
   }
 
@@ -164,11 +250,21 @@
 /* Mobile Drawer */
 .mobile-drawer {
   display: none;
-  background: #0c101a;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: fixed;
+  top: 76px;
+  left: 1rem;
+  right: 1rem;
+  border-radius: var(--radius-xl);
+  background: rgba(12, 16, 26, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.8);
   padding: 1.25rem 1.5rem;
   flex-direction: column;
   gap: 1rem;
+  pointer-events: auto;
+  z-index: 55;
 
   .mobile-nav-link {
     font-size: 0.9375rem;
@@ -188,7 +284,7 @@
 
 /* Error Banner */
 .error-container {
-  margin-top: 1rem;
+  margin-top: 5.5rem;
 }
 
 .landing-error-banner {
@@ -207,7 +303,7 @@
 .hero-section {
   position: relative;
   z-index: 1;
-  padding: 4.5rem 0 5rem;
+  padding: 6.5rem 0 5rem;
 }
 
 .hero-grid {

@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../core/auth/auth';
@@ -13,7 +13,9 @@ import { AuthService } from '../core/auth/auth';
 export class LandingComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
+  readonly isScrolled = signal<boolean>(false);
   readonly activeStep = signal<1 | 2 | 3 | 4>(1);
   readonly loadingRole = signal<'reviewer' | 'admin' | null>(null);
   readonly errorMessage = signal<string | null>(null);
@@ -23,6 +25,21 @@ export class LandingComponent implements OnInit {
     if (this.authService.isAuthenticated()) {
       this.router.navigate(['/intakes']);
       return;
+    }
+
+    if (typeof window !== 'undefined') {
+      const handleScroll = () => {
+        const scrolled = window.scrollY > 30;
+        if (this.isScrolled() !== scrolled) {
+          this.isScrolled.set(scrolled);
+        }
+      };
+
+      handleScroll();
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      this.destroyRef.onDestroy(() => {
+        window.removeEventListener('scroll', handleScroll);
+      });
     }
 
     // Scroll to section if opened with hash (e.g. #pipeline, #architecture)
