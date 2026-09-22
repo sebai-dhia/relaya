@@ -1,0 +1,130 @@
+.board-card {
+  padding: 1.5rem;
+  margin-top: 0;
+}
+
+.board-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.board-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.board-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+  letter-spacing: 0.05em;
+}
+
+.board-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.board-desc {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.25rem;
+  max-width: 60ch;
+}
+
+.awaiting-approval-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  background: rgba(217, 119, 6, 0.08);
+  border: 1px solid rgba(217, 119, 6, 0.25);
+  border-radius: var(--radius-md);
+  margin-bottom: 1.25rem;
+  font-size: 0.875rem;
+
+  .alert-svg {
+    color: var(--warning-primary);
+    margin-top: 0.125rem;
+  }
+
+  .banner-text {
+    flex: 1;
+  }
+
+  .banner-title {
+    display: block;
+    font-weight: 700;
+    color: #b45309;
+    margin-bottom: 0.2rem;
+  }
+
+  .banner-desc {
+    margin: 0;
+    color: var(--text-secondary);
+    line-height: 1.5;
+
+    strong {
+      display: inline;
+      font-weight: 700;
+      color: #92400e;
+    }
+  }
+}
+
+.result-box {
+  margin-top: 1rem;
+}
+
+.stub-banner {
+  padding: 1rem;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  animation: fade-up 0.2s ease both;
+
+  .stub-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .info-svg {
+    color: var(--text-secondary);
+  }
+
+  .stub-msg {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .stub-id {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.35rem;
+    display: inline-block;
+  }
+}
+
+.success-banner {
+  padding: 1rem;
+  background: var(--accent-subtle);
+  border: 1px solid rgba(5, 150, 105, 0.2);
+  border-radius: var(--radius-md);
+  color: var(--accent-text);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: fade-up 0.2s ease both;
+
+  .card-link {
+    font-weight: 600;
+    text-decoration: underline;
+  }
+}

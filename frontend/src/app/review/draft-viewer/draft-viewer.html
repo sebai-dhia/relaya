@@ -1,0 +1,100 @@
+<div class="viewer-container">
+  <!-- Hash & State Status Banner -->
+  <div class="hash-banner surface-card">
+    <div class="hash-info">
+      <span class="hash-label">Content Hash (SHA-256):</span>
+      <span class="hash-val font-mono" [title]="draft().contentHash">{{ truncateHash(draft().contentHash) }}</span>
+    </div>
+    @if (draft().approvalInvalidated) {
+      <span class="badge badge-failed">APPROVAL INVALIDATED</span>
+    } @else if (draft().isApproved) {
+      <span class="badge badge-approved">APPROVED FOR HANDOFF</span>
+    } @else {
+      <span class="badge badge-pending">DRAFT PENDING REVIEW</span>
+    }
+  </div>
+
+  <!-- Objectives & Deliverables Bento Section -->
+  <div class="bento-grid-panel surface-card">
+    <div class="bento-grid">
+      <div class="bento-card">
+        <h3 class="card-title">Stated Deliverables</h3>
+        <div class="items-stack">
+          @for (del of draft().deliverables; track del.text) {
+            <div class="excerpt-item">
+              <span class="item-text">{{ del.text }}</span>
+              @if (del.sourceExcerpt) {
+                <span class="source-tag">Source: "{{ del.sourceExcerpt }}"</span>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="bento-card">
+        <h3 class="card-title">Core Objectives</h3>
+        <div class="items-stack">
+          @for (obj of draft().objectives; track obj.text) {
+            <div class="excerpt-item">
+              <span class="item-text">{{ obj.text }}</span>
+              @if (obj.sourceExcerpt) {
+                <span class="source-tag">Source: "{{ obj.sourceExcerpt }}"</span>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Flagged Unknowns (Never fabricated, explicitly flagged) -->
+  @if (draft().unknowns && draft().unknowns.length > 0) {
+    <div class="unknowns-card surface-card">
+      <div class="unknowns-header">
+        <svg class="icon-svg alert-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        <div>
+          <h4 class="alert-title">Flagged Gaps & Unknowns</h4>
+          <p class="alert-desc">These critical requirements were not found in client brief and need clarification.</p>
+        </div>
+      </div>
+      <ul class="unknowns-list">
+        @for (u of draft().unknowns; track u) {
+          <li>{{ u }}</li>
+        }
+      </ul>
+    </div>
+  }
+
+  <!-- Proposed Tasks -->
+  <div class="surface-card tasks-card">
+    <div class="tasks-card-header">
+      <h3 class="card-title">Proposed Scope Tasks & Estimates</h3>
+      <span class="badge badge-neutral">AI Proposal · Non-binding</span>
+    </div>
+    <p class="proposal-disclaimer">
+      These suggested execution tasks were generated from the unstructured intake. They are proposals for the board card, not committed scope.
+    </p>
+    <div class="tasks-table-wrap">
+      <table class="tasks-table">
+        <thead>
+          <tr>
+            <th>Actionable Task Proposal</th>
+            <th style="width: 150px; text-align: right;">Estimate</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (task of draft().proposedTasks; track task.title) {
+            <tr>
+              <td>{{ task.title }}</td>
+              <td style="text-align: right;" class="font-mono">{{ task.estimateDays }} days</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

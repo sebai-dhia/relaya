@@ -1,0 +1,137 @@
+<div class="review-page">
+  <div class="review-header">
+    <div>
+      <a routerLink="/intakes" class="back-link">← Back to Intakes</a>
+      <h1 class="page-title">{{ intake()?.clientLabel || clientLabelHint() || 'Client Scope Review' }}</h1>
+      <p class="page-subtitle font-mono">
+        @if (intake()?.currentVersion) {
+          Intake ID: {{ intakeId }} · Version {{ intake()?.currentVersion }}
+        } @else {
+          Intake ID: {{ intakeId }}
+        }
+      </p>
+    </div>
+    <div class="header-actions">
+      @if (draft() && !isEditing()) {
+        <button type="button" class="btn btn-secondary" (click)="isEditing.set(true)">
+          <svg class="icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+            <path d="m15 5 4 4"/>
+          </svg>
+          <span>Edit Draft</span>
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary btn-approve"
+          [disabled]="draft()?.isApproved && !draft()?.approvalInvalidated || approving()"
+          (click)="onApprove()"
+        >
+          @if (approving()) {
+            <span>Approving...</span>
+          } @else if (draft()?.isApproved && !draft()?.approvalInvalidated) {
+            <svg class="icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <span>Approved</span>
+          } @else {
+            <span>Approve Scope</span>
+          }
+        </button>
+      }
+    </div>
+  </div>
+
+
+  <!-- Live SSE Engine Status Tracker (only shown if in an active/failed state) -->
+  @if (hasLoaded() && analysisStatus()) {
+    <app-analysis-status
+      [status]="analysisStatus()"
+      [errorMessage]="analysisError()"
+      (retryTrigger)="onRetryAnalysis()"
+    ></app-analysis-status>
+  }
+
+  <!-- Review Skeleton (first-time visit only while draft loads) -->
+  @if (!hasLoaded() && !draft() && analysisStatus() !== 'ANALYSIS_PENDING') {
+    <div class="review-skeleton surface-card">
+      <div class="sk-scope-header">
+        <span class="sk sk-badge"></span>
+        <span class="sk sk-id"></span>
+      </div>
+      <div class="sk-scope-body">
+        <div class="sk sk-block"></div>
+        <div class="sk sk-block-sm"></div>
+      </div>
+    </div>
+  }
+
+  <!-- Edit Mode vs View Mode -->
+  @if (draft() && isEditing()) {
+    <app-draft-editor
+      [draft]="draft()!"
+      (draftSaved)="onDraftSaved()"
+      (cancelEdit)="isEditing.set(false)"
+      (deleteTrigger)="showDeleteConfirm.set(true)"
+    ></app-draft-editor>
+  } @else if (draft()) {
+    <div class="content-enter">
+      <app-draft-viewer [draft]="draft()!"></app-draft-viewer>
+
+      <!-- Board connector trigger card -->
+      <app-board-trigger
+        [approvalId]="intake()?.approvalId || approvedApprovalId() || null"
+        [canWrite]="!!(draft()?.isApproved && !draft()?.approvalInvalidated)"
+        [intakeStatus]="intake()?.status || null"
+      ></app-board-trigger>
+    </div>
+  }
+
+  <!-- Immutable Audit Trail -->
+  @if (auditTrail().length > 0) {
+    <div class="content-enter">
+      <app-audit-timeline [events]="auditTrail()"></app-audit-timeline>
+    </div>
+  }
+
+  <!-- Delete Confirmation Modal -->
+  @if (showDeleteConfirm()) {
+    <div class="modal-backdrop" (click)="showDeleteConfirm.set(false)">
+      <div class="modal-card surface-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-icon-danger">
+            <svg class="icon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h18"/>
+              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="modal-title">Delete Intake Brief</h3>
+            <p class="modal-subtitle">This action cannot be undone</p>
+          </div>
+        </div>
+        <p class="modal-body">
+          Are you sure you want to permanently delete <strong>{{ intake()?.clientLabel || 'this brief' }}</strong>?
+          All extraction drafts, versions, and audit history will be permanently deleted.
+          @if (intake()?.status === 'WRITE_SUCCESS') {
+            <span class="modal-notice" style="margin-top: 0.75rem;">
+              Note: Any card already created on Trello will remain on your Trello board.
+            </span>
+          }
+        </p>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" (click)="showDeleteConfirm.set(false)" [disabled]="deleting()">
+            Cancel
+          </button>
+          <button type="button" class="btn btn-danger" (click)="confirmDelete()" [disabled]="deleting()">
+            @if (deleting()) {
+              <span>Deleting...</span>
+            } @else {
+              <span>Delete Permanently</span>
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
