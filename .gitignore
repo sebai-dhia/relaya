@@ -1,0 +1,18 @@
+# Secrets — never commit
+.env
+backend/src/main/resources/application-local.yml
+
+# Build outputs
+backend/target/
+frontend/dist/
+frontend/.angular/
+node_modules/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Private AI docs (keep local only, never push publicly)
+GEMINI.md
+docs/
