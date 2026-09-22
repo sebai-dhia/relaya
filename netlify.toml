@@ -3,6 +3,13 @@
   publish = "dist/frontend-app/browser"
   command = "npm run build"
 
+# Route API calls to Render backend
+[[redirects]]
+  from = "/api/*"
+  to = "https://relaya-backend-a91s.onrender.com/api/:splat"
+  status = 200
+  force = true
+
 # SPA routing: fallback all non-file routes to index.html
 [[redirects]]
   from = "/*"
