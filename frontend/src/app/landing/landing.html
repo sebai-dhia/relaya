@@ -1,0 +1,608 @@
+<div class="landing-viewport">
+  <!-- Navigation Header -->
+  <header class="landing-header">
+    <div class="landing-container header-inner">
+      <div class="brand-cluster">
+        <a routerLink="/" class="brand-anchor" aria-label="Relaya Home">
+          <img src="/assets/brand/relaya-mark.png" alt="Relaya mark" class="brand-icon" width="28" height="20" />
+          <span class="brand-text">RELAYA</span>
+          <span class="demo-tag">DEMO</span>
+        </a>
+        <span class="version-badge">v1.0 Pilot</span>
+      </div>
+
+      <nav class="desktop-nav">
+        <a href="#pipeline" class="nav-link">Pipeline</a>
+        <a href="#architecture" class="nav-link">Architecture</a>
+        <a href="#guarantees" class="nav-link">Guarantees</a>
+        <a href="https://github.com/sebai-dhia/relaya" target="_blank" rel="noopener noreferrer" class="nav-link github-link">
+          <svg class="icon-svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          <span>GitHub</span>
+        </a>
+      </nav>
+
+      <div class="action-cluster">
+        <button type="button" class="btn btn-secondary btn-sm" (click)="launchDemo('reviewer')">
+          <span>1-Click Reviewer</span>
+        </button>
+        <a routerLink="/login" class="btn btn-primary btn-sm">
+          <span>Sign In</span>
+        </a>
+        <button type="button" class="mobile-toggle" (click)="toggleMobileNav()" aria-label="Toggle navigation">
+          <svg class="icon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer -->
+    @if (mobileNavOpen()) {
+      <div class="mobile-drawer">
+        <a href="#pipeline" class="mobile-nav-link" (click)="closeMobileNav()">Pipeline</a>
+        <a href="#architecture" class="mobile-nav-link" (click)="closeMobileNav()">Architecture</a>
+        <a href="#guarantees" class="mobile-nav-link" (click)="closeMobileNav()">Guarantees</a>
+        <a href="https://github.com/sebai-dhia/relaya" target="_blank" rel="noopener noreferrer" class="mobile-nav-link" (click)="closeMobileNav()">
+          GitHub Repository
+        </a>
+        <div class="mobile-drawer-cta">
+          <button type="button" class="btn btn-secondary btn-block" (click)="launchDemo('reviewer'); closeMobileNav()">
+            Launch Reviewer Demo
+          </button>
+          <button type="button" class="btn btn-primary btn-block" (click)="launchDemo('admin'); closeMobileNav()">
+            Launch Admin Demo
+          </button>
+        </div>
+      </div>
+    }
+  </header>
+
+  <!-- Error Banner if Demo Auth Fails -->
+  @if (errorMessage()) {
+    <div class="landing-container error-container">
+      <div class="landing-error-banner">
+        <svg class="icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span>{{ errorMessage() }}</span>
+      </div>
+    </div>
+  }
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="landing-container hero-grid">
+      <!-- Left Column: Copy and Quick Launchers -->
+      <div class="hero-content">
+        <div class="status-pill">
+          <span class="pulse-dot"></span>
+          <span class="status-text">LIVE DEMO · CLIENT INTAKE TO TRELLO PIPELINE</span>
+        </div>
+
+        <h1 class="hero-headline">
+          Turn unstructured client briefs into board-ready handoffs.
+        </h1>
+
+        <p class="hero-subtext">
+          Relaya parses chaotic intake text through multi-model LLM extraction, flags absent specifications, binds human approval to a cryptographic content hash, and automatically handsoff verified cards to Trello.
+        </p>
+
+        <!-- 1-Click Interactive Launchers -->
+        <div class="launcher-card surface-card">
+          <div class="launcher-header">
+            <span class="launcher-title">Instant Interactive Demo</span>
+            <span class="launcher-badge">No Sign-up Needed</span>
+          </div>
+
+          <div class="launcher-buttons">
+            <button
+              type="button"
+              class="btn btn-primary btn-lg launcher-btn"
+              [disabled]="loadingRole() !== null"
+              (click)="launchDemo('reviewer')"
+            >
+              @if (loadingRole() === 'reviewer') {
+                <span class="btn-spinner"></span>
+                <span>Connecting Reviewer...</span>
+              } @else {
+                <svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                  <polyline points="10 9 9 9 8 9"/>
+                </svg>
+                <span>Launch as Reviewer</span>
+              }
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-secondary btn-lg launcher-btn"
+              [disabled]="loadingRole() !== null"
+              (click)="launchDemo('admin')"
+            >
+              @if (loadingRole() === 'admin') {
+                <span class="btn-spinner"></span>
+                <span>Connecting Admin...</span>
+              } @else {
+                <svg class="icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                <span>Launch as Admin</span>
+              }
+            </button>
+          </div>
+
+          <div class="credentials-meta">
+            <div class="cred-item">
+              <span class="cred-label">Reviewer:</span>
+              <code>reviewer@relaya.demo</code>
+            </div>
+            <div class="cred-separator">·</div>
+            <div class="cred-item">
+              <span class="cred-label">Admin:</span>
+              <code>admin@relaya.demo</code>
+            </div>
+            <div class="cred-separator">·</div>
+            <div class="cred-item">
+              <span class="cred-label">Pass:</span>
+              <code>changeit</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tech Badges Strip -->
+        <div class="tech-strip">
+          <span class="tech-pill">Java 21 · Spring Boot 4</span>
+          <span class="tech-pill">Angular 22 · Zoneless Signals</span>
+          <span class="tech-pill">PostgreSQL · Flyway</span>
+          <span class="tech-pill">Groq LLM Waterfall</span>
+          <span class="tech-pill">SSE Streaming</span>
+        </div>
+      </div>
+
+      <!-- Right Column: Interactive Live Pipeline Preview -->
+      <div class="hero-preview">
+        <div class="pipeline-widget surface-card">
+          <!-- Widget Step Tabs -->
+          <div class="widget-tabs" role="tablist">
+            <button
+              type="button"
+              class="tab-btn"
+              [class.active]="activeStep() === 1"
+              (click)="setStep(1)"
+              role="tab"
+            >
+              <span class="step-num">01</span>
+              <span class="step-label">Raw Brief</span>
+            </button>
+            <button
+              type="button"
+              class="tab-btn"
+              [class.active]="activeStep() === 2"
+              (click)="setStep(2)"
+              role="tab"
+            >
+              <span class="step-num">02</span>
+              <span class="step-label">AI Extraction</span>
+            </button>
+            <button
+              type="button"
+              class="tab-btn"
+              [class.active]="activeStep() === 3"
+              (click)="setStep(3)"
+              role="tab"
+            >
+              <span class="step-num">03</span>
+              <span class="step-label">Hash Lock</span>
+            </button>
+            <button
+              type="button"
+              class="tab-btn"
+              [class.active]="activeStep() === 4"
+              (click)="setStep(4)"
+              role="tab"
+            >
+              <span class="step-num">04</span>
+              <span class="step-label">Trello Sync</span>
+            </button>
+          </div>
+
+          <!-- Screen 1: Raw Brief -->
+          @if (activeStep() === 1) {
+            <div class="widget-body panel-brief">
+              <div class="panel-header-line">
+                <span class="panel-tag">Raw Client Submission</span>
+                <span class="panel-meta">Intake #INT-409 · Horizon Logistics</span>
+              </div>
+              <div class="terminal-box">
+                <div class="terminal-bar">
+                  <span class="terminal-dot red"></span>
+                  <span class="terminal-dot yellow"></span>
+                  <span class="terminal-dot green"></span>
+                  <span class="terminal-title">client_email_paste.txt</span>
+                </div>
+                <div class="terminal-content">
+                  <p class="source-p">
+                    "Hey team, we urgently need our freight tracking web portal live by Nov 18th before peak retail season. Budget is strictly capped around $15k. It must integrate with our warehouse REST API and allow dispatchers to assign routes. We also need automated email alerts for drivers. Let us know if you need our legacy EDI format!"
+                  </p>
+                </div>
+              </div>
+              <div class="panel-action-row">
+                <span class="helper-text">Unorganized client requirements without structured deliverables.</span>
+                <button type="button" class="btn btn-primary btn-sm" (click)="setStep(2)">
+                  <span>Run AI Extraction</span>
+                  <svg class="icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          }
+
+          <!-- Screen 2: AI Extraction -->
+          @if (activeStep() === 2) {
+            <div class="widget-body panel-extraction">
+              <div class="panel-header-line">
+                <span class="panel-tag tag-cyan">AI Provider Extraction</span>
+                <span class="panel-meta">Model: openai/gpt-oss-120b · 892ms</span>
+              </div>
+              <div class="extraction-card">
+                <div class="field-row">
+                  <span class="field-key">Objectives</span>
+                  <span class="field-val">Deploy freight tracking portal prior to peak retail season</span>
+                </div>
+                <div class="field-row">
+                  <span class="field-key">Deliverables</span>
+                  <ul class="deliverable-list">
+                    <li>Dispatcher route assignment module</li>
+                    <li>Warehouse REST API integration bridge</li>
+                    <li>Automated driver email alert trigger</li>
+                  </ul>
+                </div>
+                <div class="field-row">
+                  <span class="field-key">Constraints</span>
+                  <span class="field-val">Strict budget cap: $15,000 USD · Target Launch: Nov 18</span>
+                </div>
+                <div class="flagged-box">
+                  <div class="flagged-header">
+                    <svg class="icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                      <line x1="12" y1="9" x2="12" y2="13"/>
+                      <line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                    <span>Flagged Unknown Gap</span>
+                  </div>
+                  <p class="flagged-text">
+                    Legacy EDI specification format is mentioned by client but undefined. Flagged for review before board write.
+                  </p>
+                </div>
+              </div>
+              <div class="panel-action-row">
+                <span class="helper-text">100% cited against source text. Unknowns flagged, never fabricated.</span>
+                <button type="button" class="btn btn-primary btn-sm" (click)="setStep(3)">
+                  <span>Sign Off & Lock Hash</span>
+                  <svg class="icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          }
+
+          <!-- Screen 3: Hash Lock & Cryptographic Invalidation -->
+          @if (activeStep() === 3) {
+            <div class="widget-body panel-hash">
+              <div class="panel-header-line">
+                <span class="panel-tag tag-violet">Cryptographic Verification</span>
+                <span class="panel-meta">Status: APPROVED</span>
+              </div>
+              <div class="hash-display-card">
+                <div class="hash-badge-row">
+                  <span class="badge badge-approved">APPROVAL ACTIVE</span>
+                  <span class="hash-timestamp">Signed by reviewer&#64;relaya.demo</span>
+                </div>
+                <div class="hash-code-block">
+                  <span class="hash-label">SHA-256 CONTENT HASH</span>
+                  <code class="hash-string">e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</code>
+                </div>
+                <div class="rule-callout">
+                  <svg class="icon-svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                  <div class="rule-copy">
+                    <strong>Immutability Guarantee:</strong>
+                    <span>If this scope draft is modified by a single character, this approval is instantly invalidated to prevent scope creep.</span>
+                  </div>
+                </div>
+              </div>
+              <div class="panel-action-row">
+                <span class="helper-text">Approval is hard-bound to exact draft version hash.</span>
+                <button type="button" class="btn btn-primary btn-sm" (click)="setStep(4)">
+                  <span>Dispatch to Trello</span>
+                  <svg class="icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          }
+
+          <!-- Screen 4: Trello Sync -->
+          @if (activeStep() === 4) {
+            <div class="widget-body panel-trello">
+              <div class="panel-header-line">
+                <span class="panel-tag tag-emerald">Board Connector Handoff</span>
+                <span class="panel-meta">Status: 201 Created · Trello API</span>
+              </div>
+              <div class="trello-card-mockup">
+                <div class="trello-card-header">
+                  <span class="trello-chip">Horizon Logistics</span>
+                  <span class="trello-chip chip-date">Due: Nov 18</span>
+                </div>
+                <h4 class="trello-card-title">Freight Tracking Portal Revamp</h4>
+                <div class="trello-checklist">
+                  <span class="checklist-header">Verified Scope Checklist (3/3)</span>
+                  <div class="checklist-item done">
+                    <span class="check-box">&check;</span>
+                    <span>Dispatcher route assignment engine</span>
+                  </div>
+                  <div class="checklist-item done">
+                    <span class="check-box">&check;</span>
+                    <span>Warehouse REST API bridge</span>
+                  </div>
+                  <div class="checklist-item done">
+                    <span class="check-box">&check;</span>
+                    <span>Automated driver email notifications</span>
+                  </div>
+                </div>
+                <div class="trello-card-footer">
+                  <span class="idempotency-key">Idempotency Key: bw_8a7d9f2</span>
+                  <span class="badge badge-success">SYNC SUCCESS</span>
+                </div>
+              </div>
+              <div class="panel-action-row">
+                <span class="helper-text">Single approved card created. Zero duplicates guaranteed.</span>
+                <button type="button" class="btn btn-secondary btn-sm" (click)="setStep(1)">
+                  <span>Start Flow Again</span>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem vs Solution Guarantee Section -->
+  <section id="guarantees" class="section-guarantees">
+    <div class="landing-container">
+      <div class="section-heading">
+        <span class="section-eyebrow">THE DELIVERY GAP</span>
+        <h2 class="section-title">Why agency handoffs fail with naive AI</h2>
+        <p class="section-desc">Most AI tools hallucinate details, guess missing budgets, or let scope creep bypass engineering approval.</p>
+      </div>
+
+      <div class="comparison-grid">
+        <div class="comp-col comp-bad surface-card">
+          <div class="comp-header">
+            <span class="comp-badge bad">Typical AI & Manual Handoff</span>
+            <h3 class="comp-title">The Scope Chaos Problem</h3>
+          </div>
+          <ul class="comp-list">
+            <li class="comp-item">
+              <svg class="icon-svg red-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="15" y1="9" x2="9" y2="15"/>
+                <line x1="9" y1="9" x2="15" y2="15"/>
+              </svg>
+              <div>
+                <strong>Silent Hallucinations</strong>
+                <span>AI fabricates timelines, features, or budgets when unspecified in client text.</span>
+              </div>
+            </li>
+            <li class="comp-item">
+              <svg class="icon-svg red-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="15" y1="9" x2="9" y2="15"/>
+                <line x1="9" y1="9" x2="15" y2="15"/>
+              </svg>
+              <div>
+                <strong>Duplicate Board Cards</strong>
+                <span>Retried webhook writes spam delivery boards with duplicated tickets and mixed IDs.</span>
+              </div>
+            </li>
+            <li class="comp-item">
+              <svg class="icon-svg red-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="15" y1="9" x2="9" y2="15"/>
+                <line x1="9" y1="9" x2="15" y2="15"/>
+              </svg>
+              <div>
+                <strong>Unverified Scope Changes</strong>
+                <span>Client requests edits post-approval, but developers build against the outdated card.</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="comp-col comp-good surface-card">
+          <div class="comp-header">
+            <span class="comp-badge good">The Relaya Guarantee</span>
+            <h3 class="comp-title">Engineered Rigor & Verification</h3>
+          </div>
+          <ul class="comp-list">
+            <li class="comp-item">
+              <svg class="icon-svg green-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+              <div>
+                <strong>Strict Source Citations & Unknown Flagging</strong>
+                <span>Every field maps to exact source excerpts. Absent requirements are highlighted as gaps.</span>
+              </div>
+            </li>
+            <li class="comp-item">
+              <svg class="icon-svg green-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+              <div>
+                <strong>SHA-256 Cryptographic Hash Invalidation</strong>
+                <span>Approvals bind to exact draft content hashes. Any subsequent edit immediately voids the approval.</span>
+              </div>
+            </li>
+            <li class="comp-item">
+              <svg class="icon-svg green-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+              <div>
+                <strong>Idempotent Board Connector</strong>
+                <span>Zero board writes without valid approval ID. Strict idempotency key prevents duplicate cards.</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture Bento Grid Section -->
+  <section id="architecture" class="section-architecture">
+    <div class="landing-container">
+      <div class="section-heading">
+        <span class="section-eyebrow">UNDER THE HOOD</span>
+        <h2 class="section-title">Production architecture, built clean</h2>
+        <p class="section-desc">Designed with Hexagonal Ports & Adapters, enterprise Spring Boot 4, and reactive Angular 22 Zoneless Signals.</p>
+      </div>
+
+      <div class="bento-grid">
+        <!-- Tile 1: Hexagonal Domain Core -->
+        <div class="bento-card bento-wide surface-card">
+          <div class="bento-icon-wrapper">
+            <svg class="icon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+              <polyline points="2 17 12 22 22 17"/>
+              <polyline points="2 12 12 17 22 12"/>
+            </svg>
+          </div>
+          <h3 class="bento-title">Hexagonal Architecture (Ports & Adapters)</h3>
+          <p class="bento-text">
+            Domain core is pure Java 21 with zero Spring framework dependencies. External AI providers (Groq) and task boards (Trello) plug in strictly at the boundary via <code>ProviderAdapter</code> and <code>BoardConnector</code>.
+          </p>
+          <div class="bento-footer-tag">
+            <code>Domain &rarr; Inbound/Outbound Ports &rarr; Infrastructure Adapters</code>
+          </div>
+        </div>
+
+        <!-- Tile 2: Zoneless Angular 22 -->
+        <div class="bento-card surface-card">
+          <div class="bento-icon-wrapper">
+            <svg class="icon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+          </div>
+          <h3 class="bento-title">Angular 22 Zoneless</h3>
+          <p class="bento-text">
+            Powered by <code>provideZonelessChangeDetection()</code>, fine-grained Signals, and the async <code>resource()</code> API. Zero Zone.js runtime overhead.
+          </p>
+        </div>
+
+        <!-- Tile 3: AI Provider Fallback Waterfall -->
+        <div class="bento-card surface-card">
+          <div class="bento-icon-wrapper">
+            <svg class="icon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 14 14"/>
+            </svg>
+          </div>
+          <h3 class="bento-title">Multi-Model Resiliency</h3>
+          <p class="bento-text">
+            Zero-crash dynamic fallback: <code>openai/gpt-oss-120b</code> &rarr; <code>openai/gpt-oss-20b</code> &rarr; <code>qwen/qwen3.8-27b</code> &rarr; synthetic fallback.
+          </p>
+        </div>
+
+        <!-- Tile 4: Flyway & Multi-Tenancy -->
+        <div class="bento-card surface-card">
+          <div class="bento-icon-wrapper">
+            <svg class="icon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <ellipse cx="12" cy="5" rx="9" ry="3"/>
+              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+            </svg>
+          </div>
+          <h3 class="bento-title">Multi-Tenant PostgreSQL</h3>
+          <p class="bento-text">
+            Every entity scoped with <code>tenantId</code>. Flyway automated migrations with immutable <code>UsageLedger</code> token and dollar-cost accounting.
+          </p>
+        </div>
+
+        <!-- Tile 5: Server-Sent Events -->
+        <div class="bento-card bento-wide surface-card">
+          <div class="bento-icon-wrapper">
+            <svg class="icon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4.93 4.93a10 10 0 0 1 14.14 0"/>
+              <path d="M7.76 7.76a6 6 0 0 1 8.48 0"/>
+              <circle cx="12" cy="12" r="2"/>
+            </svg>
+          </div>
+          <h3 class="bento-title">Asynchronous Real-Time SSE Streams</h3>
+          <p class="bento-text">
+            No heavy WebSockets or client-side polling. AI analysis jobs return <code>202 Accepted</code>, while the frontend subscribes via short-lived tokens to a resilient SSE stream with exponential reconnect backoff.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ready to Test CTA Section -->
+  <section class="section-cta">
+    <div class="landing-container">
+      <div class="cta-banner surface-card">
+        <div class="cta-text">
+          <h2 class="cta-title">Ready to test the live pipeline?</h2>
+          <p class="cta-desc">Launch instantly with seeded demo credentials. No signup or credit card required.</p>
+        </div>
+        <div class="cta-actions">
+          <button type="button" class="btn btn-primary btn-lg" (click)="launchDemo('reviewer')">
+            Launch as Reviewer
+          </button>
+          <button type="button" class="btn btn-secondary btn-lg" (click)="launchDemo('admin')">
+            Launch as Admin
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Minimal Footer -->
+  <footer class="landing-footer">
+    <div class="landing-container footer-inner">
+      <div class="footer-left">
+        <div class="footer-brand">
+          <img src="/assets/brand/relaya-mark.png" alt="Relaya" width="22" height="16" />
+          <span class="footer-brand-name">RELAYA</span>
+          <span class="demo-tag">DEMO</span>
+        </div>
+        <p class="footer-notice">
+          Demonstration project showcasing AI extraction, cryptographic hash binding, and Trello board delivery.
+        </p>
+      </div>
+      <div class="footer-links">
+        <a routerLink="/login" class="footer-link">Sign In</a>
+        <a href="https://github.com/sebai-dhia/relaya" target="_blank" rel="noopener noreferrer" class="footer-link">GitHub</a>
+        <a href="#pipeline" class="footer-link">Pipeline</a>
+        <a href="#architecture" class="footer-link">Architecture</a>
+      </div>
+    </div>
+  </footer>
+</div>

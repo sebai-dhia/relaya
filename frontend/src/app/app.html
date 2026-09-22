@@ -7,6 +7,7 @@
             <a routerLink="/intakes" class="brand-logo" (click)="closeNav()" aria-label="Relaya Dashboard">
               <img src="/assets/brand/relaya-mark.png" alt="" class="brand-mark-img" width="28" height="20" />
               <span class="brand-name">RELAYA</span>
+              <span class="demo-tag">DEMO</span>
             </a>
             <span class="tenant-badge">Pilot Agency</span>
           </div>
@@ -109,7 +110,7 @@
     </header>
   }
 
-  <main class="main-body container">
+  <main class="main-body" [class.container]="authService.isAuthenticated()">
     <router-outlet></router-outlet>
   </main>
 </div>

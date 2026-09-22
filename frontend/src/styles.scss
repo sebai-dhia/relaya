@@ -251,6 +251,23 @@ button.btn:active {
   border-color: #e2e8f0;
 }
 
+/* Demo Mode Branding Tag */
+.demo-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.45rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 9999px;
+  background: rgba(2, 132, 199, 0.08);
+  color: #0284c7;
+  border: 1px solid rgba(2, 132, 199, 0.28);
+  vertical-align: middle;
+  line-height: 1;
+}
+
 .icon-svg {
   display: inline-block;
   vertical-align: middle;

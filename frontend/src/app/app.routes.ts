@@ -6,7 +6,15 @@ export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'intakes'
+    loadComponent: () => import('./landing/landing').then((m) => m.LandingComponent)
+  },
+  {
+    path: 'welcome',
+    loadComponent: () => import('./landing/landing').then((m) => m.LandingComponent)
+  },
+  {
+    path: 'demo',
+    loadComponent: () => import('./landing/landing').then((m) => m.LandingComponent)
   },
   {
     path: 'login',
