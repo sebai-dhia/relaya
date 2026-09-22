@@ -3,6 +3,12 @@
   scroll-behavior: smooth;
 }
 
+#pipeline,
+#architecture,
+#guarantees {
+  scroll-margin-top: 80px;
+}
+
 .landing-viewport {
   min-height: 100dvh;
   background-color: #07090e;

@@ -22,6 +22,29 @@ export class LandingComponent implements OnInit {
   ngOnInit(): void {
     if (this.authService.isAuthenticated()) {
       this.router.navigate(['/intakes']);
+      return;
+    }
+
+    // Scroll to section if opened with hash (e.g. #pipeline, #architecture)
+    if (typeof window !== 'undefined' && window.location.hash) {
+      const targetId = window.location.hash.replace('#', '');
+      setTimeout(() => this.performScroll(targetId), 100);
+    }
+  }
+
+  scrollToSection(event: Event, sectionId: string): void {
+    event.preventDefault();
+    this.performScroll(sectionId);
+    if (typeof window !== 'undefined' && window.history) {
+      window.history.replaceState(null, '', `#${sectionId}`);
+    }
+  }
+
+  private performScroll(sectionId: string): void {
+    if (typeof document === 'undefined') return;
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
 
