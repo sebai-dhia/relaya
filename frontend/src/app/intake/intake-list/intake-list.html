@@ -1,0 +1,89 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Client Intakes</h1>
+      <p class="page-subtitle">Track intake briefs, analysis state, and Trello board handoffs</p>
+    </div>
+    <a routerLink="/intakes/new" class="btn btn-accent">
+      <span>+ New Intake</span>
+    </a>
+  </div>
+
+  @if (loading()) {
+    <div class="table-container surface-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Client Label</th>
+            <th>Status</th>
+            <th>Created At</th>
+            <th style="text-align: right;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (_ of [0,1,2]; track $index) {
+            <tr class="skeleton-row">
+              <td class="client-cell">
+                <span class="sk sk-name"></span>
+                <span class="sk sk-id"></span>
+              </td>
+              <td><span class="sk sk-badge"></span></td>
+              <td><span class="sk sk-date"></span></td>
+              <td style="text-align: right;"><span class="sk sk-btn"></span></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else if (intakes().length === 0) {
+    <div class="empty-state surface-card content-enter">
+      <h3>No client briefs submitted yet</h3>
+      <p>Submit your first unstructured client intake text to generate a delivery scope.</p>
+      <a routerLink="/intakes/new" class="btn btn-primary" style="margin-top: 1rem;">
+        Submit Brief
+      </a>
+    </div>
+  } @else {
+    <div class="table-container surface-card content-enter">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Client Label</th>
+            <th>Status</th>
+            <th>Created At</th>
+            <th style="text-align: right;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of intakes(); track item.intakeId) {
+            <tr class="table-row">
+              <td class="client-cell" data-label="Client">
+                <span class="client-name">{{ item.clientLabel }}</span>
+                <span class="client-id font-mono">{{ item.intakeId.substring(0, 8) }}...</span>
+              </td>
+              <td data-label="Status">
+                <span class="badge" [ngClass]="getStatusBadgeClass(item.status)">
+                  {{ formatStatus(item.status) }}
+                </span>
+              </td>
+              <td class="time-cell" data-label="Created">
+                {{ item.createdAt | date:'short' }}
+              </td>
+              <td style="text-align: right;" data-label="Action">
+                <a
+                  [routerLink]="['/intakes', item.intakeId, 'review']"
+                  class="btn btn-secondary btn-sm"
+                  [class.btn-disabled]="isCtaDisabled(item.status)"
+                  [attr.tabindex]="isCtaDisabled(item.status) ? '-1' : null"
+                  [attr.aria-disabled]="isCtaDisabled(item.status)"
+                >
+                  {{ getRowCtaLabel(item.status) }}
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

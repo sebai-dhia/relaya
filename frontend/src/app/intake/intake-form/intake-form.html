@@ -1,0 +1,65 @@
+<div class="form-page-container">
+  <div class="form-header">
+    <a routerLink="/intakes" class="back-link">← Back to Intakes</a>
+    <h1 class="page-title">Submit Client Brief</h1>
+    <p class="page-subtitle">Paste unstructured email, notes, or client meeting transcript.</p>
+  </div>
+
+  <form (ngSubmit)="onSubmit()" class="intake-card surface-card">
+    <div class="form-group">
+      <label for="clientLabel">Client or Project Name *</label>
+      <input
+        id="clientLabel"
+        type="text"
+        [(ngModel)]="clientLabel"
+        name="clientLabel"
+        required
+        placeholder="e.g. Apex Legal Advisory"
+        class="form-input"
+      />
+    </div>
+
+    <div class="form-group">
+      <label>Service Type</label>
+      <div class="service-type-label">
+        <span>Website Delivery</span>
+        <span class="badge badge-neutral">Pilot — only type available</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="label-row">
+        <label for="rawText">Unstructured Intake Text *</label>
+        <span class="char-counter">{{ rawText.length }} characters</span>
+      </div>
+      <textarea
+        id="rawText"
+        [(ngModel)]="rawText"
+        name="rawText"
+        rows="12"
+        required
+        placeholder="Paste full client communication, desired deliverables, budget hints, deadlines, etc."
+        class="form-textarea font-mono"
+      ></textarea>
+      <p class="field-hint">200+ characters recommended for accurate AI extraction.</p>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-ghost" (click)="loadSampleBrief()">
+        Load sample brief
+      </button>
+      <div class="submit-zone">
+        @if (errorMessage()) {
+          <p class="form-error-inline">{{ errorMessage() }}</p>
+        }
+        <button type="submit" class="btn btn-accent" [disabled]="submitting() || !clientLabel || !rawText">
+          @if (submitting()) {
+            <span>Creating Intake...</span>
+          } @else {
+            <span>Submit &amp; Begin AI Extraction</span>
+          }
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
