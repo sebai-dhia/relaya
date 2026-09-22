@@ -13,10 +13,10 @@
           </div>
 
           <nav class="nav-links">
+            <a routerLink="/intakes" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item" (click)="closeNav()">
+              Intakes
+            </a>
             @if (authService.isAdmin()) {
-              <a routerLink="/intakes" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item" (click)="closeNav()">
-                Intakes
-              </a>
               <a routerLink="/admin/usage" routerLinkActive="active" class="nav-item" (click)="closeNav()">
                 AI Usage
               </a>

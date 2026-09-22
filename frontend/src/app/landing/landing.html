@@ -24,8 +24,13 @@
       </nav>
 
       <div class="action-cluster">
-        <button type="button" class="btn btn-secondary btn-sm" (click)="launchDemo('reviewer')">
-          <span>1-Click Reviewer</span>
+        <button type="button" class="btn btn-secondary btn-sm" [disabled]="loadingRole() !== null" (click)="launchDemo('reviewer')">
+          @if (loadingRole() === 'reviewer') {
+            <span class="btn-spinner"></span>
+            <span>Connecting...</span>
+          } @else {
+            <span>1-Click Reviewer</span>
+          }
         </button>
         <a routerLink="/login" class="btn btn-primary btn-sm">
           <span>Sign In</span>
@@ -50,11 +55,21 @@
           GitHub Repository
         </a>
         <div class="mobile-drawer-cta">
-          <button type="button" class="btn btn-secondary btn-block" (click)="launchDemo('reviewer'); closeMobileNav()">
-            Launch Reviewer Demo
+          <button type="button" class="btn btn-secondary btn-block" [disabled]="loadingRole() !== null" (click)="launchDemo('reviewer'); closeMobileNav()">
+            @if (loadingRole() === 'reviewer') {
+              <span class="btn-spinner"></span>
+              <span>Connecting Reviewer...</span>
+            } @else {
+              <span>Launch Reviewer Demo</span>
+            }
           </button>
-          <button type="button" class="btn btn-primary btn-block" (click)="launchDemo('admin'); closeMobileNav()">
-            Launch Admin Demo
+          <button type="button" class="btn btn-primary btn-block" [disabled]="loadingRole() !== null" (click)="launchDemo('admin'); closeMobileNav()">
+            @if (loadingRole() === 'admin') {
+              <span class="btn-spinner"></span>
+              <span>Connecting Admin...</span>
+            } @else {
+              <span>Launch Admin Demo</span>
+            }
           </button>
         </div>
       </div>
@@ -75,8 +90,8 @@
     </div>
   }
 
-  <!-- Hero Section -->
-  <section class="hero-section">
+  <!-- Hero Section & Interactive Pipeline -->
+  <section id="pipeline" class="hero-section">
     <div class="landing-container hero-grid">
       <!-- Left Column: Copy and Quick Launchers -->
       <div class="hero-content">
@@ -573,11 +588,21 @@
           <p class="cta-desc">Launch instantly with seeded demo credentials. No signup or credit card required.</p>
         </div>
         <div class="cta-actions">
-          <button type="button" class="btn btn-primary btn-lg" (click)="launchDemo('reviewer')">
-            Launch as Reviewer
+          <button type="button" class="btn btn-primary btn-lg" [disabled]="loadingRole() !== null" (click)="launchDemo('reviewer')">
+            @if (loadingRole() === 'reviewer') {
+              <span class="btn-spinner"></span>
+              <span>Connecting Reviewer...</span>
+            } @else {
+              <span>Launch as Reviewer</span>
+            }
           </button>
-          <button type="button" class="btn btn-secondary btn-lg" (click)="launchDemo('admin')">
-            Launch as Admin
+          <button type="button" class="btn btn-secondary btn-lg" [disabled]="loadingRole() !== null" (click)="launchDemo('admin')">
+            @if (loadingRole() === 'admin') {
+              <span class="btn-spinner"></span>
+              <span>Connecting Admin...</span>
+            } @else {
+              <span>Launch as Admin</span>
+            }
           </button>
         </div>
       </div>

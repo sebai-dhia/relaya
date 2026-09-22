@@ -38,6 +38,18 @@ export class LandingComponent implements OnInit {
   }
 
   launchDemo(role: 'reviewer' | 'admin'): void {
+    const targetRole = role === 'admin' ? 'ROLE_ADMIN' : 'ROLE_REVIEWER';
+
+    // If already authenticated with the desired role, navigate immediately with 0 latency
+    if (this.authService.isAuthenticated() && this.authService.currentUser()?.role === targetRole) {
+      if (role === 'admin') {
+        this.router.navigate(['/admin/usage']);
+      } else {
+        this.router.navigate(['/intakes']);
+      }
+      return;
+    }
+
     this.errorMessage.set(null);
     this.loadingRole.set(role);
 

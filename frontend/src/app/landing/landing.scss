@@ -1,4 +1,7 @@
-/* Relaya Landing Page Styles — Crafted with High-Agency Design & Strict Aesthetic Taste */
+:host {
+  display: block;
+  scroll-behavior: smooth;
+}
 
 .landing-viewport {
   min-height: 100dvh;

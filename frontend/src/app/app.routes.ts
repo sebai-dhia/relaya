@@ -1,23 +1,28 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth-guard';
 import { adminGuard } from './core/auth/admin-guard';
+import { guestGuard } from './core/auth/guest-guard';
 
 export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
+    canActivate: [guestGuard],
     loadComponent: () => import('./landing/landing').then((m) => m.LandingComponent)
   },
   {
     path: 'welcome',
+    canActivate: [guestGuard],
     loadComponent: () => import('./landing/landing').then((m) => m.LandingComponent)
   },
   {
     path: 'demo',
+    canActivate: [guestGuard],
     loadComponent: () => import('./landing/landing').then((m) => m.LandingComponent)
   },
   {
     path: 'login',
+    canActivate: [guestGuard],
     loadComponent: () => import('./core/auth/login/login').then((m) => m.LoginComponent)
   },
   {
