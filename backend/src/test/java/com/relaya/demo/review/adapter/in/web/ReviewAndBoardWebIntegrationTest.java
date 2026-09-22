@@ -134,18 +134,18 @@ class ReviewAndBoardWebIntegrationTest {
 		ReviewDto.ApproveDraftResponse approved = objectMapper.readValue(approveRes, ReviewDto.ApproveDraftResponse.class);
 		String approvalId = approved.approvalId().toString();
 
-		// 4. POST board write (STUB)
+		// 4. POST board write (STUB or SUCCESS if real Trello configured)
 		mockMvc.perform(post("/api/v1/approvals/" + approvalId + "/write")
 						.header("Authorization", "Bearer " + accessToken)
 						.header("Idempotency-Key", UUID.randomUUID().toString()))
 				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$.status").value("STUB"))
+				.andExpect(jsonPath("$.status").value(org.hamcrest.Matchers.anyOf(org.hamcrest.Matchers.is("STUB"), org.hamcrest.Matchers.is("SUCCESS"))))
 				.andExpect(jsonPath("$.destinationBoard").value("TRELLO"));
 
 		// 5. POST board write duplicate (idempotent returns existing)
 		mockMvc.perform(post("/api/v1/approvals/" + approvalId + "/write")
 						.header("Authorization", "Bearer " + accessToken))
 				.andExpect(status().isCreated())
-				.andExpect(jsonPath("$.status").value("STUB"));
+				.andExpect(jsonPath("$.status").value(org.hamcrest.Matchers.anyOf(org.hamcrest.Matchers.is("STUB"), org.hamcrest.Matchers.is("SUCCESS"))));
 	}
 }

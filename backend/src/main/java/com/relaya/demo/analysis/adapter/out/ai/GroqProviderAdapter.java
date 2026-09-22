@@ -24,7 +24,7 @@ import java.util.UUID;
 public class GroqProviderAdapter implements ProviderAdapter {
 
 	private static final Logger log = LoggerFactory.getLogger(GroqProviderAdapter.class);
-	private static final String DEFAULT_MODEL = "llama-3.3-70b-versatile";
+	private static final String DEFAULT_MODEL = "llama-3.1-8b-instant";
 	private static final String GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 	private final TenantConfigPort tenantConfigPort;
@@ -32,16 +32,19 @@ public class GroqProviderAdapter implements ProviderAdapter {
 	private final RestClient restClient;
 	private final ObjectMapper objectMapper;
 	private final String envGroqApiKey;
+	private final String envGroqModel;
 
 	public GroqProviderAdapter(
 			TenantConfigPort tenantConfigPort,
 			BudgetGuard budgetGuard,
 			@Value("${GROQ_API_KEY:}") String envGroqApiKey,
+			@Value("${GROQ_MODEL:}") String envGroqModel,
 			RestClient restClient
 	) {
 		this.tenantConfigPort = Objects.requireNonNull(tenantConfigPort, "tenantConfigPort must not be null");
 		this.budgetGuard = Objects.requireNonNull(budgetGuard, "budgetGuard must not be null");
 		this.envGroqApiKey = (envGroqApiKey == null) ? "" : envGroqApiKey.trim();
+		this.envGroqModel = (envGroqModel == null) ? "" : envGroqModel.trim();
 		this.objectMapper = new ObjectMapper();
 		this.restClient = Objects.requireNonNull(restClient, "restClient must not be null");
 	}
@@ -55,14 +58,28 @@ public class GroqProviderAdapter implements ProviderAdapter {
 		budgetGuard.checkGuards(tenantId, estimatedTokens);
 
 		String apiKey = resolveApiKey(tenantId);
-		String model = tenantConfigPort.findConfigValue(tenantId, "GROQ_MODEL").orElse(DEFAULT_MODEL);
+		String model = resolveModel(tenantId);
 
 		if (apiKey.isBlank() || "PLACEHOLDER".equalsIgnoreCase(apiKey)) {
 			log.info("Using synthetic extraction fallback for tenant {} (no live Groq API key)", tenantId);
 			return generateSyntheticFallback(rawText, model, estimatedTokens);
 		}
 
-		return callGroqApi(rawText, model, apiKey, estimatedTokens);
+		try {
+			return callGroqApi(rawText, model, apiKey, estimatedTokens);
+		} catch (Exception e) {
+			log.warn("Groq API call failed ({}). Falling back to synthetic extraction for demo resilience.", e.getMessage());
+			return generateSyntheticFallback(rawText, model, estimatedTokens);
+		}
+	}
+
+	private String resolveModel(UUID tenantId) {
+		if (!envGroqModel.isBlank()) {
+			return envGroqModel;
+		}
+		return tenantConfigPort.findConfigValue(tenantId, "GROQ_MODEL")
+				.filter(m -> !m.isBlank() && !"llama-3.3-70b-versatile".equalsIgnoreCase(m))
+				.orElse(DEFAULT_MODEL);
 	}
 
 	private String resolveApiKey(UUID tenantId) {
