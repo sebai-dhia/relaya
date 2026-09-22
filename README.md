@@ -10,7 +10,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Angular-22%20Zoneless-DD0031?style=flat-square&logo=angular&logoColor=white" alt="Angular 22" />
   <img src="https://img.shields.io/badge/Java-21-ED8B00?style=flat-square&logo=openjdk&logoColor=white" alt="Java 21" />
-  <img src="https://img.shields.io/badge/Spring%20Boot-3.4%2F4.0-6DB33F?style=flat-square&logo=springboot&logoColor=white" alt="Spring Boot" />
+  <img src="https://img.shields.io/badge/Spring%20Boot-4.0-6DB33F?style=flat-square&logo=springboot&logoColor=white" alt="Spring Boot" />
   <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL" />
   <img src="https://img.shields.io/badge/AI%20Provider-Groq%20%28Llama%203.3%29-F55036?style=flat-square" alt="Groq" />
   <img src="https://img.shields.io/badge/Board-Trello%20API-0052CC?style=flat-square&logo=trello&logoColor=white" alt="Trello" />
