@@ -1,0 +1,66 @@
+<div class="login-container">
+  <div class="login-card surface-card">
+    <div class="brand-hero">
+      <img src="/assets/brand/relaya-mark.png" alt="Relaya" class="login-brand-icon" width="48" height="34" />
+      <span class="brand-badge">RELAYA</span>
+    </div>
+    <h1 class="login-title">Agency Sign In</h1>
+    <p class="login-subtitle">Intake extraction and Trello handoff system</p>
+
+    @if (errorMessage()) {
+      <div class="error-banner">{{ errorMessage() }}</div>
+    }
+
+    <form (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="email">Work Email</label>
+        <input
+          id="email"
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          required
+          autocomplete="email"
+          placeholder="reviewer@relaya.demo"
+          class="form-input"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          required
+          autocomplete="current-password"
+          placeholder="••••••••"
+          class="form-input"
+        />
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" [disabled]="loading()">
+        @if (loading()) {
+          <span>Signing in...</span>
+        } @else {
+          <span>Sign In</span>
+        }
+      </button>
+    </form>
+
+    <div class="quick-credentials" role="group" aria-label="Pilot test credentials">
+      <span class="quick-title">Pilot Test Credentials:</span>
+      <button type="button" class="chip"
+        aria-label="Sign in as Reviewer (reviewer@relaya.demo)"
+        (click)="fillCreds('reviewer@relaya.demo')">
+        Reviewer
+      </button>
+      <button type="button" class="chip"
+        aria-label="Sign in as Admin (admin@relaya.demo)"
+        (click)="fillCreds('admin@relaya.demo')">
+        Admin
+      </button>
+    </div>
+  </div>
+</div>
