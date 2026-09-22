@@ -1,0 +1,40 @@
+services:
+
+  db:
+    image: postgres:16-alpine
+    container_name: relaya-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       relaya
+      POSTGRES_USER:     relaya
+      POSTGRES_PASSWORD: relaya
+    ports:
+      - "5432:5432"
+    volumes:
+      - relaya-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U relaya -d relaya"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: relaya-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL:      jdbc:postgresql://db:5432/relaya
+      DATABASE_USER:     relaya
+      DATABASE_PASSWORD: relaya
+    ports:
+      - "8082:8082"
+
+volumes:
+  relaya-db-data:
