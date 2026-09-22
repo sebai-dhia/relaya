@@ -1,0 +1,14 @@
+package com.relaya.demo.intake.domain;
+
+public enum IntakeStatus {
+	INTAKE_SUBMITTED,
+	ANALYSIS_PENDING,
+	ANALYSIS_READY,
+	ANALYSIS_FAILED,
+	DRAFT_EDITED,
+	APPROVED,
+	WRITE_PENDING,
+	WRITE_SUCCESS,
+	WRITE_FAILED,
+	INVALIDATED
+}
